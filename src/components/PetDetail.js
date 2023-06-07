@@ -1,7 +1,29 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import petsData from "../petsData";
+import { useParams } from "react-router-dom";
+import { getPetById, updatePet } from "../api/pets";
+
 const PetDetail = () => {
-  const pet = petsData[0];
+  const { petId } = useParams();
+  const [pet, setPet] = useState({});
+
+  const callApi = async () => {
+    const res = await getPetById(petId);
+    setPet(res);
+  };
+
+  const handleUpdate = () => {
+    updatePet(pet.id, pet.name, pet.image, pet.type, pet.adopted);
+  };
+
+  useEffect(() => {
+    callApi();
+  }, []);
+
+  if (!pet) {
+    return <h1>There is no pet with the id: ${petId}</h1>;
+  }
+
   return (
     <div className="bg-[#F9E3BE] w-screen h-[100vh] flex justify-center items-center">
       <div className="border border-black rounded-md w-[70%] h-[70%] overflow-hidden flex flex-col md:flex-row p-5">
@@ -17,7 +39,10 @@ const PetDetail = () => {
           <h1>Type: {pet.type}</h1>
           <h1>adopted: {pet.adopted}</h1>
 
-          <button className="w-[70px] border border-black rounded-md  hover:bg-green-400 mb-5">
+          <button
+            onClick={handleUpdate}
+            className="w-[70px] border border-black rounded-md  hover:bg-green-400 mb-5"
+          >
             Adobt
           </button>
 
