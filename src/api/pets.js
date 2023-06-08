@@ -29,4 +29,8 @@ const getPetById = async (id) => {
   return res.data;
 };
 
-export { getPets, addPet, updatePet, getPetById };
+const deletePet = async (petId) => {
+  const res = await instance.delete(`pets/${petId}`);
+  return res.data;
+};
+export { getPets, addPet, updatePet, getPetById, deletePet };

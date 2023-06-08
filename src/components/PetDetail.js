@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import petsData from "../petsData";
 import { useParams } from "react-router-dom";
-import { getPetById, updatePet } from "../api/pets";
+import { deletePet, getPetById, updatePet } from "../api/pets";
 
 const PetDetail = () => {
   const { petId } = useParams();
@@ -14,6 +14,9 @@ const PetDetail = () => {
 
   const handleUpdate = () => {
     updatePet(pet.id, pet.name, pet.image, pet.type, pet.adopted);
+  };
+  const handleDelete = () => {
+    deletePet(petId);
   };
 
   useEffect(() => {
@@ -46,7 +49,10 @@ const PetDetail = () => {
             Adobt
           </button>
 
-          <button className="w-[70px] border border-black rounded-md  hover:bg-red-400">
+          <button
+            onClick={handleDelete}
+            className="w-[70px] border border-black rounded-md  hover:bg-red-400"
+          >
             Delete
           </button>
         </div>
