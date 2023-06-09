@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
 const PetItem = ({ pet }) => {
   return (
     <div className="w-[300px] h-[400px]  border border-black rounded-md flex flex-col justify-between items-center p-4">

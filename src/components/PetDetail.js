@@ -1,31 +1,39 @@
-import React, { useState, useEffect } from "react";
-import petsData from "../petsData";
+import React from "react";
+
 import { useParams } from "react-router-dom";
 import { deletePet, getPetById, updatePet } from "../api/pets";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const PetDetail = () => {
   const { petId } = useParams();
-  const [pet, setPet] = useState({});
 
-  const callApi = async () => {
-    const res = await getPetById(petId);
-    setPet(res);
-  };
+  const { data: pet } = useQuery({
+    queryKey: ["pet"],
+    queryFn: () => getPetById(petId),
+  });
+
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: () => deletePet(petId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pet"] });
+    },
+  });
+
+  // const callApi = async () => {
+  //   const res = await getPetById(petId);
+  //   setPet(res);
+  // };
+  // useEffect(() => {
+  //   callApi();
+  // }, []);
+  if (!pet) {
+    return <h1>There is no pet with the id: {petId}</h1>;
+  }
 
   const handleUpdate = () => {
     updatePet(pet.id, pet.name, pet.image, pet.type, pet.adopted);
   };
-  const handleDelete = () => {
-    deletePet(petId);
-  };
-
-  useEffect(() => {
-    callApi();
-  }, []);
-
-  if (!pet) {
-    return <h1>There is no pet with the id: ${petId}</h1>;
-  }
 
   return (
     <div className="bg-[#F9E3BE] w-screen h-[100vh] flex justify-center items-center">
@@ -41,7 +49,6 @@ const PetDetail = () => {
           <h1>Name: {pet.name}</h1>
           <h1>Type: {pet.type}</h1>
           <h1>adopted: {pet.adopted}</h1>
-
           <button
             onClick={handleUpdate}
             className="w-[70px] border border-black rounded-md  hover:bg-green-400 mb-5"
@@ -50,7 +57,7 @@ const PetDetail = () => {
           </button>
 
           <button
-            onClick={handleDelete}
+            onClick={() => mutation.mutate()}
             className="w-[70px] border border-black rounded-md  hover:bg-red-400"
           >
             Delete
